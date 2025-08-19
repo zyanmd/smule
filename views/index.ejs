@@ -1,0 +1,108 @@
+<%- include('partials/header') %>
+
+<main class="container mx-auto px-4 py-8">
+  <div class="max-w-2xl mx-auto">
+    <h1 class="text-4xl font-bold text-center text-indigo-600 mb-2 animate-pulse">Smule Downloader</h1>
+    <p class="text-center text-gray-600 mb-8">Download audio dan video dari Smule dengan mudah</p>
+    
+    <div class="bg-white rounded-lg shadow-md p-6 mb-8 transition-all duration-300 hover:shadow-lg">
+      <form action="/download" method="POST" class="space-y-4">
+        <div>
+          <label for="url" class="block text-sm font-medium text-gray-700 mb-1">URL Smule</label>
+          <input 
+            type="url" 
+            id="url" 
+            name="url" 
+            placeholder="https://www.smule.com/recording/..." 
+            required
+            class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+          >
+        </div>
+        <button 
+          type="submit" 
+          class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 transition-colors duration-200 transform hover:scale-[1.02]"
+        >
+          Download
+        </button>
+      </form>
+    </div>
+
+    <% if (error) { %>
+      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 animate-fade-in" role="alert">
+        <p class="font-bold">Error</p>
+        <p><%= error %></p>
+      </div>
+    <% } %>
+
+    <% if (result) { %>
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8 animate-fade-in">
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Hasil Download</h2>
+        
+        <div class="mb-6">
+          <h3 class="text-lg font-medium text-gray-700 mb-2">Metadata</h3>
+          <div class="bg-gray-50 p-4 rounded-md">
+            <p class="mb-2"><span class="font-semibold">Judul:</span> <%= result.metadata.title %></p>
+            <p class="mb-2"><span class="font-semibold">Deskripsi:</span> <%= result.metadata.description %></p>
+            <div class="mt-4">
+              <img src="<%= result.metadata.thumbnail %>" alt="Thumbnail" class="rounded-md shadow-sm max-w-full h-auto">
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div class="bg-indigo-50 p-4 rounded-md transition-transform duration-300 hover:scale-[1.02]">
+            <h3 class="text-lg font-medium text-indigo-700 mb-3">Audio</h3>
+            <% if (result.audio.m4a) { %>
+              <a 
+                href="<%= result.audio.m4a %>" 
+                class="inline-flex items-center bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors duration-200"
+                download
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                Download M4A
+              </a>
+            <% } else { %>
+              <p class="text-gray-600">Format audio tidak tersedia</p>
+            <% } %>
+          </div>
+          
+          <div class="bg-green-50 p-4 rounded-md transition-transform duration-300 hover:scale-[1.02]">
+            <h3 class="text-lg font-medium text-green-700 mb-3">Video</h3>
+            <% if (result.video.mp4) { %>
+              <a 
+                href="<%= result.video.mp4 %>" 
+                class="inline-flex items-center bg-green-600 text-white py-2 px-4 rounded-md hover:bg-green-700 transition-colors duration-200"
+                download
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                </svg>
+                Download MP4
+              </a>
+            <% } else { %>
+              <p class="text-gray-600">Format video tidak tersedia</p>
+            <% } %>
+          </div>
+        </div>
+        
+        <div class="mt-6 text-center">
+          <a 
+            href="<%= result.metadata.smule_link %>" 
+            target="_blank" 
+            class="inline-flex items-center text-indigo-600 hover:text-indigo-800 transition-colors duration-200"
+          >
+            <span>Lihat di Smule</span>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 ml-1" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z" />
+              <path d="M5 5a2 2 0 00-2 2v8a2 2 0 002 2h8a2 2 0 002-2v-3a1 1 0 10-2 0v3H5V7h3a1 1 0 000-2H5z" />
+            </svg>
+          </a>
+        </div>
+      </div>
+    <% } %>
+  </div>
+</main>
+
+<%- include('partials/footer') %>
